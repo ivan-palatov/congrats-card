@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import type { Department } from '../data/departments';
 import '../styles/envelope.css';
 
@@ -8,9 +9,30 @@ type EnvelopeProps = {
   phase: EnvelopePhase;
 };
 
+const LETTER_ESCAPE_DELAY_MS = 1150;
+
 export function Envelope({ department, phase }: EnvelopeProps) {
   const isAnimating = phase === 'opening';
   const isHidden = phase === 'revealed';
+  const [letterEscaping, setLetterEscaping] = useState(false);
+
+  useEffect(() => {
+    if (phase !== 'opening') {
+      setLetterEscaping(false);
+      return;
+    }
+
+    const timer = window.setTimeout(() => setLetterEscaping(true), LETTER_ESCAPE_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [phase]);
+
+  const envelopeClass = [
+    'envelope',
+    isAnimating ? 'envelope--animating' : '',
+    letterEscaping ? 'envelope--letter-escaping' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <div
@@ -18,10 +40,10 @@ export function Envelope({ department, phase }: EnvelopeProps) {
       style={{ '--dept-accent': department.accent } as React.CSSProperties}
       aria-hidden={isHidden}
     >
-      <div className={`envelope${isAnimating ? ' envelope--animating' : ''}`}>
+      <div className={envelopeClass}>
         <div className="envelope__back" />
 
-        <div className="envelope__letter">
+        <div className={`envelope__letter${letterEscaping ? ' envelope__letter--above' : ''}`}>
           <span className="envelope__letter-preview">{department.name}</span>
         </div>
 
