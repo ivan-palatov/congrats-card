@@ -3,7 +3,7 @@ import type { Department } from '../data/departments';
 import { DepartmentIcon } from './DepartmentIcon';
 import '../styles/envelope.css';
 
-export type EnvelopePhase = 'closed' | 'opening' | 'revealed';
+export type EnvelopePhase = 'closed' | 'opening' | 'expanding' | 'revealed';
 
 type EnvelopeProps = {
   department: Department;
@@ -14,6 +14,7 @@ const LETTER_ESCAPE_DELAY_MS = 1150;
 
 export function Envelope({ department, phase }: EnvelopeProps) {
   const isAnimating = phase === 'opening';
+  const isFading = phase === 'expanding';
   const isHidden = phase === 'revealed';
   const [letterEscaping, setLetterEscaping] = useState(false);
 
@@ -37,7 +38,13 @@ export function Envelope({ department, phase }: EnvelopeProps) {
 
   return (
     <div
-      className={`envelope-stage${isHidden ? ' envelope-stage--hidden' : ''}`}
+      className={[
+        'envelope-stage',
+        isFading ? 'envelope-stage--fading' : '',
+        isHidden ? 'envelope-stage--hidden' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       style={{ '--dept-accent': department.accent } as React.CSSProperties}
       aria-hidden={isHidden}
     >

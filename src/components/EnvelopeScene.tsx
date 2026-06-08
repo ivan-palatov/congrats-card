@@ -11,7 +11,8 @@ type EnvelopeSceneProps = {
   onClose: () => void;
 };
 
-const OPEN_DURATION_MS = 2200;
+const LETTER_RISE_END_MS = 1680;
+const EXPAND_DURATION_MS = 1100;
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -30,21 +31,31 @@ function useReducedMotion() {
 export function EnvelopeScene({ department, onClose }: EnvelopeSceneProps) {
   const reducedMotion = useReducedMotion();
   const [phase, setPhase] = useState<EnvelopePhase>('closed');
-  const timerRef = useRef<number | null>(null);
+  const expandTimerRef = useRef<number | null>(null);
+  const revealTimerRef = useRef<number | null>(null);
 
-  const clearTimer = useCallback(() => {
-    if (timerRef.current !== null) {
-      window.clearTimeout(timerRef.current);
-      timerRef.current = null;
+  const clearTimers = useCallback(() => {
+    if (expandTimerRef.current !== null) {
+      window.clearTimeout(expandTimerRef.current);
+      expandTimerRef.current = null;
+    }
+    if (revealTimerRef.current !== null) {
+      window.clearTimeout(revealTimerRef.current);
+      revealTimerRef.current = null;
     }
   }, []);
 
-  useEffect(() => clearTimer, [clearTimer]);
+  useEffect(() => clearTimers, [clearTimers]);
 
   const reveal = useCallback(() => {
-    clearTimer();
+    clearTimers();
     setPhase('revealed');
-  }, [clearTimer]);
+  }, [clearTimers]);
+
+  const startExpanding = useCallback(() => {
+    setPhase('expanding');
+    revealTimerRef.current = window.setTimeout(reveal, EXPAND_DURATION_MS);
+  }, [reveal]);
 
   const openEnvelope = useCallback(() => {
     if (phase !== 'closed') return;
@@ -55,17 +66,18 @@ export function EnvelopeScene({ department, onClose }: EnvelopeSceneProps) {
     }
 
     setPhase('opening');
-    timerRef.current = window.setTimeout(reveal, OPEN_DURATION_MS);
-  }, [phase, reducedMotion, reveal]);
+    expandTimerRef.current = window.setTimeout(startExpanding, LETTER_RISE_END_MS);
+  }, [phase, reducedMotion, reveal, startExpanding]);
 
   const skipToReveal = useCallback(() => {
-    if (phase === 'opening') {
+    if (phase === 'opening' || phase === 'expanding') {
       reveal();
     }
   }, [phase, reveal]);
 
-  const showLetter = phase === 'revealed';
-  const showFireworks = !reducedMotion && (phase === 'opening' || phase === 'revealed');
+  const showMorphCard = phase === 'expanding' || phase === 'revealed';
+  const showFireworks =
+    !reducedMotion && (phase === 'opening' || phase === 'expanding' || phase === 'revealed');
 
   return (
     <AnimatePresence>
@@ -76,7 +88,7 @@ export function EnvelopeScene({ department, onClose }: EnvelopeSceneProps) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.35 }}
-        onClick={phase === 'opening' ? skipToReveal : undefined}
+        onClick={phase === 'opening' || phase === 'expanding' ? skipToReveal : undefined}
       >
         <div className="envelope-scene__bg" />
 
@@ -93,7 +105,7 @@ export function EnvelopeScene({ department, onClose }: EnvelopeSceneProps) {
 
         <Envelope department={department} phase={phase} />
 
-        {!showLetter && (
+        {!showMorphCard && (
           <>
             <p className="envelope-scene__hint">
               {phase === 'closed' ? 'Нажмите, чтобы открыть конверт' : 'Открываем…'}
@@ -114,11 +126,21 @@ export function EnvelopeScene({ department, onClose }: EnvelopeSceneProps) {
           </>
         )}
 
-        <AnimatePresence>
-          {showLetter && (
-            <div className="envelope-scene__letter-wrap">
-              <LetterCard key={department.id} department={department} onBack={onClose} />
-            </div>
+        <AnimatePresence mode="sync">
+          {showMorphCard && (
+            <motion.div
+              className="envelope-scene__letter-wrap"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
+              <LetterCard
+                key={department.id}
+                department={department}
+                onBack={onClose}
+                morphing={phase === 'expanding'}
+              />
+            </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
