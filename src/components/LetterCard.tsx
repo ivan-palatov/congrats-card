@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import type { Department } from '../data/departments';
+import { DepartmentIcon } from './DepartmentIcon';
 
 type LetterCardProps = {
   department: Department;
@@ -15,8 +16,8 @@ export function LetterCard({ department, onBack }: LetterCardProps) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: 'spring', stiffness: 260, damping: 24 }}
     >
-      <span className="letter-card__compass" aria-hidden="true">
-        {department.sealIcon}
+      <span className="letter-card__icon" aria-hidden="true">
+        <DepartmentIcon id={department.id} className="letter-card__icon-svg" />
       </span>
       <h2 className="letter-card__title">{department.name}</h2>
       <p className="letter-card__body">{department.message}</p>

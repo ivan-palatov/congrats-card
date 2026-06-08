@@ -43,8 +43,12 @@
   border-radius: 50%;
   background: color-mix(in srgb, var(--dept-accent) 20%, transparent);
   color: var(--dept-accent);
-  font-size: 1.25rem;
   border: 1px solid color-mix(in srgb, var(--dept-accent) 35%, transparent);
+}
+
+.dept-card__icon-svg {
+  width: 24px;
+  height: 24px;
 }
 
 .dept-card__content {

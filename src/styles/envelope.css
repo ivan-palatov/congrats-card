@@ -168,10 +168,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.45rem;
   color: #fff;
   z-index: 6;
   will-change: transform, opacity;
+}
+
+.envelope__seal-icon {
+  width: 28px;
+  height: 28px;
 }
 
 .envelope__seal::before {
@@ -280,12 +284,16 @@
   border-radius: 0 0 4px 4px;
 }
 
-.letter-card__compass {
-  display: block;
-  text-align: center;
-  font-size: 1.75rem;
-  color: var(--dept-accent);
+.letter-card__icon {
+  display: flex;
+  justify-content: center;
   margin-bottom: 0.75rem;
+  color: var(--dept-accent);
+}
+
+.letter-card__icon-svg {
+  width: 36px;
+  height: 36px;
 }
 
 .letter-card__title {

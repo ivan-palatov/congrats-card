@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Department } from '../data/departments';
+import { DepartmentIcon } from './DepartmentIcon';
 import '../styles/envelope.css';
 
 export type EnvelopePhase = 'closed' | 'opening' | 'revealed';
@@ -54,7 +55,7 @@ export function Envelope({ department, phase }: EnvelopeProps) {
         </div>
 
         <div className="envelope__seal" aria-hidden="true">
-          {department.sealIcon}
+          <DepartmentIcon id={department.id} className="envelope__seal-icon" />
         </div>
       </div>
     </div>

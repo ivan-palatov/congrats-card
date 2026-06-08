@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import type { Department } from '../data/departments';
+import { DepartmentIcon } from './DepartmentIcon';
 import './DepartmentCard.css';
 
 type DepartmentCardProps = {
@@ -23,7 +24,7 @@ export function DepartmentCard({ department, index, onSelect }: DepartmentCardPr
       aria-label={`Открыть поздравление для отдела: ${department.name}`}
     >
       <span className="dept-card__icon" aria-hidden="true">
-        {department.sealIcon}
+        <DepartmentIcon id={department.id} className="dept-card__icon-svg" />
       </span>
       <span className="dept-card__content">
         <span className="dept-card__name">{department.name}</span>
