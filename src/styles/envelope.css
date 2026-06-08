@@ -293,6 +293,7 @@
   color: var(--navy);
   border-radius: 8px;
   padding: 2.5rem 2rem 2rem;
+  text-align: center;
   box-shadow:
     0 24px 80px rgba(0, 0, 0, 0.5),
     inset 0 0 0 1px rgba(201, 162, 39, 0.3);
@@ -339,6 +340,7 @@
   line-height: 1.75;
   white-space: pre-line;
   margin-bottom: 2rem;
+  text-align: center;
 }
 
 .letter-card__footer {
