@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import type { Department } from '../data/departments';
 import { Envelope, type EnvelopePhase } from './Envelope';
 import { LetterCard } from './LetterCard';
@@ -10,7 +10,7 @@ type EnvelopeSceneProps = {
   onClose: () => void;
 };
 
-const OPEN_SEQUENCE_MS = 2400;
+const OPEN_DURATION_MS = 2200;
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(false);
@@ -29,24 +29,41 @@ function useReducedMotion() {
 export function EnvelopeScene({ department, onClose }: EnvelopeSceneProps) {
   const reducedMotion = useReducedMotion();
   const [phase, setPhase] = useState<EnvelopePhase>('closed');
+  const timerRef = useRef<number | null>(null);
+
+  const clearTimer = useCallback(() => {
+    if (timerRef.current !== null) {
+      window.clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => clearTimer, [clearTimer]);
+
+  const reveal = useCallback(() => {
+    clearTimer();
+    setPhase('revealed');
+  }, [clearTimer]);
 
   const openEnvelope = useCallback(() => {
     if (phase !== 'closed') return;
 
     if (reducedMotion) {
-      setPhase('open');
+      reveal();
       return;
     }
 
     setPhase('opening');
-    window.setTimeout(() => setPhase('open'), OPEN_SEQUENCE_MS);
-  }, [phase, reducedMotion]);
+    timerRef.current = window.setTimeout(reveal, OPEN_DURATION_MS);
+  }, [phase, reducedMotion, reveal]);
 
-  const skipToOpen = useCallback(() => {
+  const skipToReveal = useCallback(() => {
     if (phase === 'opening') {
-      setPhase('open');
+      reveal();
     }
-  }, [phase]);
+  }, [phase, reveal]);
+
+  const showLetter = phase === 'revealed';
 
   return (
     <AnimatePresence>
@@ -57,7 +74,7 @@ export function EnvelopeScene({ department, onClose }: EnvelopeSceneProps) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.35 }}
-        onClick={phase === 'opening' ? skipToOpen : undefined}
+        onClick={phase === 'opening' ? skipToReveal : undefined}
       >
         <div className="envelope-scene__bg" />
 
@@ -70,18 +87,16 @@ export function EnvelopeScene({ department, onClose }: EnvelopeSceneProps) {
           ← Назад
         </button>
 
-        {phase !== 'open' && (
-          <>
-            <Envelope department={department} phase={phase} />
+        <Envelope department={department} phase={phase} />
 
+        {!showLetter && (
+          <>
             <p className="envelope-scene__hint">
-              {phase === 'closed'
-                ? 'Нажмите, чтобы открыть конверт'
-                : 'Открываем…'}
+              {phase === 'closed' ? 'Нажмите, чтобы открыть конверт' : 'Открываем…'}
             </p>
 
             <div
-              className={`envelope-scene__cta ${phase !== 'closed' ? 'envelope-scene__cta--hidden' : ''}`}
+              className={`envelope-scene__cta${phase !== 'closed' ? ' envelope-scene__cta--hidden' : ''}`}
             >
               <button
                 type="button"
@@ -95,7 +110,13 @@ export function EnvelopeScene({ department, onClose }: EnvelopeSceneProps) {
           </>
         )}
 
-        {phase === 'open' && <LetterCard department={department} onBack={onClose} />}
+        <AnimatePresence>
+          {showLetter && (
+            <div className="envelope-scene__letter-wrap">
+              <LetterCard key={department.id} department={department} onBack={onClose} />
+            </div>
+          )}
+        </AnimatePresence>
       </motion.div>
     </AnimatePresence>
   );

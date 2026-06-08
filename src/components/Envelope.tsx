@@ -1,7 +1,7 @@
 import type { Department } from '../data/departments';
 import '../styles/envelope.css';
 
-export type EnvelopePhase = 'closed' | 'opening' | 'open';
+export type EnvelopePhase = 'closed' | 'opening' | 'revealed';
 
 type EnvelopeProps = {
   department: Department;
@@ -9,30 +9,30 @@ type EnvelopeProps = {
 };
 
 export function Envelope({ department, phase }: EnvelopeProps) {
-  const className = ['envelope', phase !== 'closed' ? `envelope--${phase}` : '']
-    .filter(Boolean)
-    .join(' ');
+  const isAnimating = phase === 'opening';
+  const isHidden = phase === 'revealed';
 
   return (
     <div
-      className={`envelope-stage ${phase === 'open' ? 'envelope-stage--done' : ''}`}
+      className={`envelope-stage${isHidden ? ' envelope-stage--hidden' : ''}`}
       style={{ '--dept-accent': department.accent } as React.CSSProperties}
+      aria-hidden={isHidden}
     >
-      <div className={className}>
+      <div className={`envelope${isAnimating ? ' envelope--animating' : ''}`}>
         <div className="envelope__back" />
-        <div className="envelope__letter-slot">
-          <div className="envelope__letter">
-            <span className="envelope__letter-preview">{department.name}</span>
-          </div>
+
+        <div className="envelope__letter">
+          <span className="envelope__letter-preview">{department.name}</span>
         </div>
-        <div className="envelope__pocket-left" />
-        <div className="envelope__pocket-right" />
-        <div className="envelope__flap">
-          <div className="envelope__flap-face" />
-          <div className="envelope__flap-face envelope__flap-face--inner" />
-          <div className="envelope__seal" aria-hidden="true">
-            {department.sealIcon}
-          </div>
+
+        <div className="envelope__front" />
+
+        <div className="envelope__flap-wrap">
+          <div className="envelope__flap" />
+        </div>
+
+        <div className="envelope__seal" aria-hidden="true">
+          {department.sealIcon}
         </div>
       </div>
     </div>
