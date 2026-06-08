@@ -38,6 +38,10 @@ function App() {
       {selectedDepartment && (
         <EnvelopeScene department={selectedDepartment} onClose={handleCloseEnvelope} />
       )}
+
+      <p className="app__credit">
+        Powered by AI <span className="app__credit-sub">(по лекциям Александра Клянчина)</span>
+      </p>
     </div>
   );
 }

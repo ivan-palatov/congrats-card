@@ -127,6 +127,25 @@ body {
   background: rgba(255, 255, 255, 0.14);
 }
 
+.app__credit {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 110;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-align: right;
+  line-height: 1.4;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.app__credit-sub {
+  display: block;
+  font-size: 0.65rem;
+  opacity: 0.85;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
