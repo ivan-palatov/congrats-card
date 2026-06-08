@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Department } from '../data/departments';
 import { Envelope, type EnvelopePhase } from './Envelope';
+import { Fireworks } from './Fireworks';
 import { LetterCard } from './LetterCard';
 import '../styles/envelope.css';
 
@@ -64,6 +65,7 @@ export function EnvelopeScene({ department, onClose }: EnvelopeSceneProps) {
   }, [phase, reveal]);
 
   const showLetter = phase === 'revealed';
+  const showFireworks = !reducedMotion && (phase === 'opening' || phase === 'revealed');
 
   return (
     <AnimatePresence>
@@ -77,6 +79,8 @@ export function EnvelopeScene({ department, onClose }: EnvelopeSceneProps) {
         onClick={phase === 'opening' ? skipToReveal : undefined}
       >
         <div className="envelope-scene__bg" />
+
+        <Fireworks active={showFireworks} accent={department.accent} />
 
         <button
           type="button"
