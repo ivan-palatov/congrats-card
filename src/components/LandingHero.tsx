@@ -26,7 +26,7 @@ export function LandingHero({ onSelectDepartment }: LandingHeroProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        55.7558° N · 17 лет на курсе
+        55.7558° N · 12 лет на курсе
       </motion.p>
 
       <motion.h1
@@ -35,7 +35,7 @@ export function LandingHero({ onSelectDepartment }: LandingHeroProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.45, duration: 0.7 }}
       >
-        17 лет <span className="hero__ask">АСК</span>
+        12 лет <span className="hero__ask">АСК</span>
       </motion.h1>
 
       <motion.p

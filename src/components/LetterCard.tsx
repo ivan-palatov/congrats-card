@@ -67,7 +67,7 @@ export function LetterCard({ department, onBack, morphing = false }: LetterCardP
             К другим отделам
           </button>
         </div>
-        <p className="letter-card__coords">АСК · 17 лет · 55.7558° N 37.6173° E</p>
+        <p className="letter-card__coords">АСК · 12 лет · 55.7558° N 37.6173° E</p>
       </motion.div>
     </motion.div>
   );
